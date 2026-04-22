@@ -1,15 +1,83 @@
 body{
     background-color: #f7f8ef;
-    font-family:Verdana, Geneva, Tahoma, sans-serif
+    font-family: 'Inter', sans-serif;
+    padding: 15px; /*espaço de dentro da div em relação ao conteúdo*/
+    flex-direction: column; /*define a direção (horizontal
+    ou vertical) e a ordem (normal ou invertida) em que os itens flexíveis são organizados dentro de um contêiner flex.*/
+    display: flex;
 }
 
 .navbar{
-    display: inline;
-    padding: 5px;
+    display: flex;
+    gap: 20px;
+    padding-left: 50px;
+}
+
+.navbar a{
+    text-decoration: none;
+    color: black;
 }
 
 #ativo{
-    border-bottom: #016cda;
+    border-bottom: 3px solid;
+}
+
+
+
+#logo_c{
+    width: 492px;
+    height: 126px;
+}
+
+.principal{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    /*background-color: blueviolet;*/
+    /*min-height: 100vh ;*/
+    padding: 100px 100px 100px 50px;
+    font-size: 25px;
+}
+
+.titulo-principal{
+    font-family: 'Pacifico', cursive;
+}
+
+.conteudo-principal{
+    width: 600px;
+    height: 600px;
+    /*background-color: aquamarine;*/
+    justify-content: center; /*alinha horizontalmente*/
+    display: flex;
+    flex-direction: column;
+}
+
+.imagem-principal{
+    justify-content: right;
+    display: flex;
+    flex: 1;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+    /*background-color: black;*/
+    
+}
+
+#img_calend{
+    width: 600px;
+    height: 600px;
+}
+
+.footer{
+    margin-top: 10px;
+    margin-bottom: 0px;
+    background-color:blue;
+    padding: 20px;
+}
+
+.footer a{
+    text-decoration: none;
+    color: black;
+    padding: 20px;
 }
 /* Responsividade básica */
 @media (max-width: 768px) {
