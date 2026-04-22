@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Login</title>
+    <title> Login </title>
     <link rel="stylesheet" href="css/login.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,32 +29,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <header class="cabecalho">
-        <nav class="navegacao">
-            <ul class="lista-menu">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="login.php" class="ativo"> Login / Cadastre-se</a></li>
-                <li><a href="#">Fale conosco</a></li>
-            </ul>
+        <nav class="navbar">
+                <a href="index.html" id="ativo">Início</a>
+                <a href="login.php"> Login / Cadastre-se</a>
+                <a href="#">Fale conosco</a>
         </nav>
     </header>
 
-    <main class="conteudo-principal">
-        <section class="secao-ilustracao">
-            <div class="container-ilustracao">
-                <img src="img/moca_pc.png" alt="Ilustração de pessoa trabalhando" class="imagem-ilustrativa">
+    <main class="principal">
+            <div id="espaco-imagem">
+                <img src="img/moca_pc.png" alt="Ilustração de pessoa trabalhando" id="imagem">
+                <footer class="footer">
+                    <span> Siga-nos! </span>
+                    <a href="#">@flashnotes</a>
+                    <a href="mailto:flahsnotes@email"> flahsnotes@email </a>
+                </footer> 
             </div>
-            <footer class="rodape-links">
-                <span>Siga-nos!</span>
-                <a href="#">@flashnotes</a>
-                <a href="mailto:flahsnotes@email">flahsnotes@email</a>
-            </footer>
-        </section>
 
-        <section class="secao-formulario">
+           
+
             <div class="container-login">
-                <div class="logo-container">
-                    <img src="img/logo_completa_azul.png" alt="Ilustração 3D de Bloco de Notas" id="logo_c">
-                </div>
+                    <img src="img/logo_completa_azul.png" alt="Ilustração da logo do site" id="logo_c">
                 
                 <h1 class="titulo-login">Login</h1>
 
@@ -70,18 +65,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="campo-entrada">
                         <label for="senha">SENHA</label>
-                        <input type="password" id="senha" name="senha" required>
+                        <input type="password" id="senha" name="senha" re   quired>
                     </div>
 
                     <button type="submit" class="botao-entrar">Entrar</button>
                 </form>
 
                 <div class="links-auxiliares">
-                    <p>Você não possui uma conta? <a href="cadastro.php">Cadastre-se aqui</a></p>
-                    <p>Você esqueceu sua senha? <a href="esquecisenha.php">Clique aqui</a></p>
+                    <p>Você não possui uma conta? Cadastre-se <a href="cadastro.php"> aqui</a></p>
+                    <p>Você esqueceu sua senha? Clique <a href="esquecisenha.php"> aqui</a></p>
                 </div>
             </div>
-        </section>
+                    
+
     </main>
 </body>
 </html>
