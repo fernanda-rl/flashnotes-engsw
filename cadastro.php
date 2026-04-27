@@ -1,98 +1,127 @@
 <?php
-// Lógica básica de backend para processar o cadastro
-$mensagem_sucesso = "";
-$mensagem_erro = "";
+/**
+ * Página de Cadastro - Flashnotes
+ * HTML e PHP unificados em um único arquivo
+ */
 
+// Inicia a sessão para armazenar dados do usuário
+session_start();
+
+// Variáveis para armazenar mensagens de erro/sucesso
+$mensagem_erro = '';
+$mensagem_sucesso = '';
+
+// Verifica se os dados foram enviados via POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'] ?? '';
-    $senha = $_POST['senha'] ?? '';
-    $confirmar_senha = $_POST['confirmar_senha'] ?? '';
+    
+    // Captura os dados do formulário
+    $email_novo = $_POST['email_usuario'] ?? '';
+    $senha_nova = $_POST['senha_usuario'] ?? '';
+    $confirmar_senha = $_POST['confirmar_senha_usuario'] ?? '';
 
-    // Validação simples
-    if (empty($email) || empty($senha) || empty($confirmar_senha)) {
+    // Limpeza básica de dados (Sanitização)
+    $email_novo = filter_var($email_novo, FILTER_SANITIZE_EMAIL);
+
+    // Validação básica
+    if (empty($email_novo) || empty($senha_nova) || empty($confirmar_senha)) {
         $mensagem_erro = "Por favor, preencha todos os campos.";
-    } elseif ($senha !== $confirmar_senha) {
-        $mensagem_erro = "As senhas não coincidem.";
+    } elseif (!filter_var($email_novo, FILTER_VALIDATE_EMAIL)) {
+        $mensagem_erro = "Por favor, insira um e-mail válido.";
+    } elseif (strlen($senha_nova) < 6) {
+        $mensagem_erro = "A senha deve ter no mínimo 6 caracteres.";
+    } elseif ($senha_nova !== $confirmar_senha) {
+        $mensagem_erro = "As senhas não coincidem. Tente novamente.";
     } else {
-        // Em um sistema real, aqui você salvaria no banco de dados
-        $mensagem_sucesso = "Cadastro realizado com sucesso! Você já pode fazer login.";
+        // Validação bem-sucedida - Em um sistema real, você salvaria no Banco de Dados
+        // Aqui, usamos password_hash para demonstrar boas práticas
+        $senha_hash = password_hash($senha_nova, PASSWORD_DEFAULT);
+        
+        // Simulando armazenamento (em produção, seria em um banco de dados)
+        $_SESSION['usuario_cadastrado'] = true;
+        $_SESSION['email_usuario'] = $email_novo;
+        
+        $mensagem_sucesso = "Cadastro realizado com sucesso! Bem-vindo, " . htmlspecialchars($email_novo) . ". Você já pode fazer login.";
     }
 }
 ?>
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashnotes - Cadastro</title>
     <link rel="stylesheet" href="css/cadastro.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="cabecalho">
-        <nav class="navegacao">
-            <ul class="lista-menu">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="login.php" class="ativo">Login / Cadastre-se</a></li>
-                <li><a href="#">Fale conosco</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main class="conteudo-principal">
-        <section class="secao-ilustracao">
-            <div class="container-ilustracao">
-                <img src="img/moca_pc.png" alt="Ilustração de pessoa trabalhando" class="imagem-ilustrativa">
+    <div class="container-principal">
+        <!-- Lado Esquerdo: Ilustração e Menu -->
+        <div class="secao-esquerda">
+            <nav class="menu-superior">
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="#" class="ativo">Login / Cadastre-se</a></li>
+                    <li><a href="#">Fale conosco</a></li>
+                </ul>
+            </nav>
+            
+            <div class="conteudo-ilustracao">
+                <img src="img/moca_pc.png" alt="Ilustração de uma pessoa trabalhando no computador" class="imagem-ilustracao">
             </div>
-            <footer class="rodape-links">
+
+            <footer class="rodape-esquerdo">
                 <span>Siga-nos!</span>
                 <a href="#">@flashnotes</a>
                 <a href="mailto:flahsnotes@email">flahsnotes@email</a>
             </footer>
-        </section>
+        </div>
 
-        <section class="secao-formulario">
-            <div class="container-cadastro">
-                <div class="logo-container">
-                    <img src="img/logo_completa_azul.png" alt="Ilustração 3D de Bloco de Notas" id="logo_c">
+        <!-- Lado Direito: Formulário de Cadastro -->
+        <div class="secao-direita">
+            <div class="caixa-cadastro">
+                <div class="logo">
+                    <img src="img/logo_completa_azul.png" alt="Logo" class="imagem-ilustracao">
                 </div>
                 
-                <h1 class="titulo-cadastro">Cadastro</h1>
+                <h2 class="titulo-cadastro">Cadastro</h2>
 
-                <?php if ($mensagem_erro): ?>
-                    <p class="mensagem-alerta erro"><?php echo $mensagem_erro; ?></p>
+                <!-- Exibe mensagens de erro ou sucesso -->
+                <?php if (!empty($mensagem_erro)): ?>
+                    <div class="mensagem mensagem-erro">
+                        <?php echo htmlspecialchars($mensagem_erro); ?>
+                    </div>
                 <?php endif; ?>
 
-                <?php if ($mensagem_sucesso): ?>
-                    <p class="mensagem-alerta sucesso"><?php echo $mensagem_sucesso; ?></p>
+                <?php if (!empty($mensagem_sucesso)): ?>
+                    <div class="mensagem mensagem-sucesso">
+                        <?php echo htmlspecialchars($mensagem_sucesso); ?>
+                    </div>
                 <?php endif; ?>
 
                 <form action="cadastro.php" method="POST" class="formulario-cadastro">
                     <div class="campo-entrada">
                         <label for="email">EMAIL</label>
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" name="email_usuario" required>
                     </div>
 
                     <div class="campo-entrada">
                         <label for="senha">SENHA</label>
-                        <input type="password" id="senha" name="senha" required>
+                        <input type="password" id="senha" name="senha_usuario" required>
                     </div>
 
                     <div class="campo-entrada">
-                        <label for="confirmar_senha">CONFIRMAR SENHA</label>
-                        <input type="password" id="confirmar_senha" name="confirmar_senha" required>
+                        <label for="confirmar-senha">CONFIRMAR SENHA</label>
+                        <input type="password" id="confirmar-senha" name="confirmar_senha_usuario" required>
                     </div>
 
                     <button type="submit" class="botao-entrar">Entrar</button>
                 </form>
 
                 <div class="links-auxiliares">
-                    <p>Você já possui uma conta? <a href="login.php">Entre aqui</a></p>
+                    <p>Você já possui uma conta? Entre <a href="login.php">aqui</a></p>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
 </body>
 </html>
