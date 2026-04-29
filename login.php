@@ -30,6 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['usuario_logado'] = true;
             $_SESSION['email_usuario'] = $email_digitado;
             $mensagem_sucesso = "Login realizado com sucesso! Bem-vindo, " . htmlspecialchars($email_digitado) . ".";
+            header("Location: dashboard.php");
+        exit();
         } else {
             // Falha no login
             $mensagem_erro = "E-mail ou senha incorretos. Tente novamente.";
