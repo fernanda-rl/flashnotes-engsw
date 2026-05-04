@@ -217,7 +217,7 @@ if (!isset($_SESSION['etapa_recuperacao'])) {
 
                 <?php if ($etapa_atual < 4): ?>
                     <div class="links-auxiliares">
-                        <p>Lembrou sua senha? <a href="login.php">Faça login aqui</a></p>
+                        <p>Lembrou sua senha? Faça login <a href="login.php"> aqui </a> </p>
                     </div>
                 <?php endif; ?>
             </div>
