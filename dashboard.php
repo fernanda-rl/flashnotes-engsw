@@ -8,7 +8,7 @@ if (!isset($_SESSION['usuario_logado'])) {
 }
 
 // 🔌 CONEXÃO
-$conn = new mysqli("localhost", "root", "", "flashnotes");
+$conn = new mysqli("localhost", "flashuser", "1234", "flashnotes");
 
 if ($conn->connect_error) {
     die("Erro: " . $conn->connect_error);

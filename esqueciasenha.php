@@ -9,8 +9,8 @@
 session_start();
 // CONEXÃO COM O BANCO
 $host = "localhost";
-$usuario = "root";
-$senha = "";
+$usuario = "flashuser";
+$senha = "1234";
 $banco = "flashnotes";
 
 $conn = new mysqli($host, $usuario, $senha, $banco);

@@ -9,8 +9,8 @@ session_start();
 
 // CONEXÃO COM O BANCO
 $host = "localhost";
-$usuario = "root";
-$senha = "";
+$usuario = "flashuser";
+$senha = "1234";
 $banco = "flashnotes";
 
 $conn = new mysqli($host, $usuario, $senha, $banco);
@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="password" id="confirmar-senha" name="confirmar_senha_usuario" required>
                     </div>
 
-                    <button type="submit" class="botao-entrar">Entrar</button>
+                    <button type="submit" class="botao-entrar">Cadastrar</button>
                 </form>
 
                 <div class="links-auxiliares">
