@@ -7,6 +7,17 @@
 
 // Inicia a sessão para armazenar dados do processo
 session_start();
+// CONEXÃO COM O BANCO
+$host = "localhost";
+$usuario = "root";
+$senha = "";
+$banco = "flashnotes";
+
+$conn = new mysqli($host, $usuario, $senha, $banco);
+
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
 
 // Variáveis para armazenar mensagens e controlar o fluxo
 $mensagem_erro = '';
@@ -14,77 +25,101 @@ $mensagem_sucesso = '';
 $etapa_atual = $_SESSION['etapa_recuperacao'] ?? 1;
 $email_recuperacao = $_SESSION['email_recuperacao'] ?? '';
 
-// Verifica se os dados foram enviados via POST
+// ==========================
+// PROCESSAMENTO
+// ==========================
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-    // ETAPA 1: Validação do Email
+
+    // ==========================
+    // ETAPA 1 - EMAIL
+    // ==========================
     if (isset($_POST['etapa1_email'])) {
-        $email_digitado = $_POST['email_usuario'] ?? '';
-        $email_digitado = filter_var($email_digitado, FILTER_SANITIZE_EMAIL);
 
-        if (empty($email_digitado)) {
-            $mensagem_erro = "Por favor, insira um e-mail válido.";
-        } elseif (!filter_var($email_digitado, FILTER_VALIDATE_EMAIL)) {
-            $mensagem_erro = "O e-mail fornecido não é válido.";
+        $email = filter_var($_POST['email_usuario'], FILTER_SANITIZE_EMAIL);
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $mensagem_erro = "E-mail inválido.";
         } else {
-            // Simula a verificação do email no banco de dados
-            // Em produção, você consultaria o banco de dados
-            $_SESSION['email_recuperacao'] = $email_digitado;
-            $_SESSION['etapa_recuperacao'] = 2;
-            $_SESSION['codigo_recuperacao'] = rand(100000, 999999); // Simula um código
-            $mensagem_sucesso = "Um código de verificação foi enviado para " . htmlspecialchars($email_digitado) . ".";
-            $etapa_atual = 2;
-            $email_recuperacao = $email_digitado;
+
+            $sql = "SELECT id FROM usuarios WHERE email = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+
+            if ($resultado->num_rows == 0) {
+                $mensagem_erro = "E-mail não encontrado.";
+            } else {
+
+                $_SESSION['email_recuperacao'] = $email;
+                $_SESSION['codigo_recuperacao'] = rand(100000, 999999);
+                $_SESSION['etapa_recuperacao'] = 2;
+
+                $mensagem_sucesso = "Código gerado! (teste: " . $_SESSION['codigo_recuperacao'] . ")";
+                $etapa_atual = 2;
+            }
+
+            $stmt->close();
         }
     }
-    
-    // ETAPA 2: Validação do Código
+
+    // ==========================
+    // ETAPA 2 - CÓDIGO
+    // ==========================
     elseif (isset($_POST['etapa2_codigo'])) {
-        $codigo_digitado = $_POST['codigo_recuperacao'] ?? '';
-        $codigo_esperado = $_SESSION['codigo_recuperacao'] ?? '';
 
-        if (empty($codigo_digitado)) {
-            $mensagem_erro = "Por favor, insira o código de verificação.";
-        } elseif ($codigo_digitado != $codigo_esperado) {
-            $mensagem_erro = "O código fornecido está incorreto. Tente novamente.";
+        $codigo = $_POST['codigo_recuperacao'];
+
+        if ($codigo != $_SESSION['codigo_recuperacao']) {
+            $mensagem_erro = "Código inválido.";
         } else {
-            // Código validado com sucesso
             $_SESSION['etapa_recuperacao'] = 3;
-            $mensagem_sucesso = "Código validado com sucesso! Agora você pode criar uma nova senha.";
             $etapa_atual = 3;
-            $email_recuperacao = $_SESSION['email_recuperacao'];
+            $mensagem_sucesso = "Código validado!";
         }
     }
-    
-    // ETAPA 3: Definição da Nova Senha
-    elseif (isset($_POST['etapa3_senha'])) {
-        $nova_senha = $_POST['nova_senha_usuario'] ?? '';
-        $confirmar_nova_senha = $_POST['confirmar_nova_senha_usuario'] ?? '';
 
-        if (empty($nova_senha) || empty($confirmar_nova_senha)) {
-            $mensagem_erro = "Por favor, preencha todos os campos de senha.";
-        } elseif (strlen($nova_senha) < 6) {
-            $mensagem_erro = "A senha deve ter no mínimo 6 caracteres.";
-        } elseif ($nova_senha !== $confirmar_nova_senha) {
-            $mensagem_erro = "As senhas não coincidem. Tente novamente.";
+    // ==========================
+    // ETAPA 3 - NOVA SENHA
+    // ==========================
+    elseif (isset($_POST['etapa3_senha'])) {
+
+        $nova = $_POST['nova_senha_usuario'];
+        $confirmar = $_POST['confirmar_nova_senha_usuario'];
+
+        if ($nova !== $confirmar) {
+            $mensagem_erro = "As senhas não coincidem.";
+        } elseif (strlen($nova) < 6) {
+            $mensagem_erro = "Senha muito curta.";
         } else {
-            // Senha atualizada com sucesso
-            // Em produção, você atualizaria o banco de dados
-            $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
-            
-            $mensagem_sucesso = "Sua senha foi redefinida com sucesso! Você será redirecionado para o login em breve.";
-            
-            // Limpa as variáveis de sessão
-            unset($_SESSION['etapa_recuperacao']);
-            unset($_SESSION['email_recuperacao']);
-            unset($_SESSION['codigo_recuperacao']);
-            
-            $etapa_atual = 4; // Etapa de conclusão
+
+            $hash = password_hash($nova, PASSWORD_DEFAULT);
+            $email = $_SESSION['email_recuperacao'];
+
+            $sql = "UPDATE usuarios SET senha_hash = ? WHERE email = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ss", $hash, $email);
+
+            if ($stmt->execute()) {
+
+                $mensagem_sucesso = "Senha redefinida com sucesso! Redirecionando...";
+
+                session_unset();
+                session_destroy();
+
+                header("refresh:2;url=login.php");
+
+                $etapa_atual = 4;
+            } else {
+                $mensagem_erro = "Erro ao atualizar senha.";
+            }
+
+            $stmt->close();
         }
     }
 }
 
-// Se a etapa não foi definida, volta para a etapa 1
+// Garante etapa inicial
 if (!isset($_SESSION['etapa_recuperacao'])) {
     $_SESSION['etapa_recuperacao'] = 1;
     $etapa_atual = 1;
@@ -217,7 +252,7 @@ if (!isset($_SESSION['etapa_recuperacao'])) {
 
                 <?php if ($etapa_atual < 4): ?>
                     <div class="links-auxiliares">
-                        <p>Lembrou sua senha? Faça login <a href="login.php"> aqui </a> </p>
+                        <p>Lembrou sua senha? <a href="login.php">Faça login aqui</a></p>
                     </div>
                 <?php endif; ?>
             </div>

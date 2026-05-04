@@ -39,7 +39,7 @@ $email_usuario = $_SESSION['email_usuario'] ?? 'usuario@exemplo.com';
 <!-- Menu Lateral (Sidebar) -->
 <aside class="sidebar" id="sidebar">
     <nav class="menu-navegacao">
-        <a href="dashboard.php" class="item-menu ">
+        <a href="dashboard.php" class="item-menu ativo">
             <img src="icons/quadro.svg" width="24" height="24" alt="Quadro branco" style="filter: brightness(0) invert(1);">
             <span>Dashboard</span>
         </a>

@@ -1,41 +1,49 @@
 <?php
-
-// Inicia a sessão para armazenar dados do usuário
 session_start();
+require 'conexao.php';
 
-// Variáveis para armazenar mensagens de erro/sucesso
 $mensagem_erro = '';
-$mensagem_sucesso = '';
 
-// Verifica se os dados foram enviados via POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // Captura os dados do formulário
     $email_digitado = $_POST['email_usuario'] ?? '';
     $senha_digitada = $_POST['senha_usuario'] ?? '';
 
-    // Limpeza básica de dados (Sanitização)
     $email_digitado = filter_var($email_digitado, FILTER_SANITIZE_EMAIL);
 
-    // Validação básica
     if (empty($email_digitado) || empty($senha_digitada)) {
         $mensagem_erro = "Por favor, preencha todos os campos.";
     } else {
-        // Exemplo de validação simples (Em um sistema real, você consultaria o Banco de Dados)
-        $email_correto = "usuario@exemplo.com";
-        $senha_correta = "123456"; // Em produção, use password_hash e password_verify
 
-        if ($email_digitado === $email_correto && $senha_digitada === $senha_correta) {
-            // Login bem-sucedido
-            $_SESSION['usuario_logado'] = true;
-            $_SESSION['email_usuario'] = $email_digitado;
-            $mensagem_sucesso = "Login realizado com sucesso! Bem-vindo, " . htmlspecialchars($email_digitado) . ".";
-            header("Location: dashboard.php");
-        exit();
+        // 🔎 Busca usuário no banco
+        $sql = "SELECT * FROM usuarios WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email_digitado);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        if ($resultado->num_rows === 1) {
+            $usuario = $resultado->fetch_assoc();
+
+            // 🔐 Verifica senha criptografada
+            if (password_verify($senha_digitada, $usuario['senha_hash'])) {
+
+                $_SESSION['usuario_logado'] = true;
+                $_SESSION['usuario_id'] = $usuario['id'];
+                $_SESSION['email_usuario'] = $usuario['email'];
+
+                header("Location: dashboard.php");
+                exit();
+
+            } else {
+                $mensagem_erro = "Senha incorreta.";
+            }
+
         } else {
-            // Falha no login
-            $mensagem_erro = "E-mail ou senha incorretos. Tente novamente.";
+            $mensagem_erro = "Usuário não encontrado.";
         }
+
+        $stmt->close();
     }
 }
 ?>

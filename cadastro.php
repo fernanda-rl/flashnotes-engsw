@@ -7,6 +7,18 @@
 // Inicia a sessão para armazenar dados do usuário
 session_start();
 
+// CONEXÃO COM O BANCO
+$host = "localhost";
+$usuario = "root";
+$senha = "";
+$banco = "flashnotes";
+
+$conn = new mysqli($host, $usuario, $senha, $banco);
+
+if ($conn->connect_error) {
+    die("Erro de conexão: " . $conn->connect_error);
+}
+
 // Variáveis para armazenar mensagens de erro/sucesso
 $mensagem_erro = '';
 $mensagem_sucesso = '';
@@ -32,15 +44,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($senha_nova !== $confirmar_senha) {
         $mensagem_erro = "As senhas não coincidem. Tente novamente.";
     } else {
-        // Validação bem-sucedida - Em um sistema real, você salvaria no Banco de Dados
-        // Aqui, usamos password_hash para demonstrar boas práticas
-        $senha_hash = password_hash($senha_nova, PASSWORD_DEFAULT);
-        
-        // Simulando armazenamento (em produção, seria em um banco de dados)
-        $_SESSION['usuario_cadastrado'] = true;
-        $_SESSION['email_usuario'] = $email_novo;
-        
-        $mensagem_sucesso = "Cadastro realizado com sucesso! Bem-vindo, " . htmlspecialchars($email_novo) . ". Você já pode fazer login.";
+    // Verifica se o e-mail já existe
+    $sql = "SELECT id FROM usuarios WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email_novo);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows > 0) {
+        $mensagem_erro = "Este e-mail já está cadastrado.";
+    } else {
+        // Criptografa a senha
+            $senha_hash = password_hash($senha_nova, PASSWORD_DEFAULT);
+
+            // Insere no banco
+            $sql = "INSERT INTO usuarios (nome, email, senha_hash, tipo_perfil) VALUES (?, ?, ?, 'estudante')";
+            $stmt = $conn->prepare($sql);
+
+            $nome = "Usuário"; // depois você pode pegar isso do formulário
+
+            $stmt->bind_param("sss", $nome, $email_novo, $senha_hash);
+
+            if ($stmt->execute()) {
+                $mensagem_sucesso = "Cadastro realizado com sucesso! Agora faça login.";
+            } else {
+                $mensagem_erro = "Erro ao cadastrar: " . $conn->error;
+            }
+        }
+
+        $stmt->close();
     }
 }
 ?>

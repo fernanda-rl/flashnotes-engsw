@@ -1,101 +1,68 @@
 <?php
-/**
- * Dashboard - Flashnotes
- * Página principal do usuário logado
- * Verifica se o usuário está autenticado antes de exibir o conteúdo
- */
-
-// Inicia a sessão
 session_start();
 
-// Verifica se o usuário está logado
-if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) {
-    // Se não estiver logado, redireciona para a página de login
+// 🔒 Proteção de acesso
+if (!isset($_SESSION['usuario_logado'])) {
     header("Location: login.php");
     exit();
 }
 
-// Dados fictícios para as tarefas pendentes
-$tarefas_pendentes = array(
-    array(
-        'titulo' => 'Trabalho Ciências',
-        'vencimento' => '08/04/26',
-        'prioridade' => 'Alta',
-        'status' => 'Não iniciado'
-    ),
-    array(
-        'titulo' => 'Trabalho Matemática',
-        'vencimento' => '07/04/26',
-        'prioridade' => 'Média',
-        'status' => 'Em progresso'
-    ),
-    array(
-        'titulo' => 'Trabalho Ciências',
-        'vencimento' => '08/04/26',
-        'prioridade' => 'Baixa',
-        'status' => 'Concluído'
-    ),
-    array(
-        'titulo' => 'Trabalho Português',
-        'vencimento' => '09/04/26',
-        'prioridade' => 'Alta',
-        'status' => 'Não iniciado'
-    )
-);
+// 🔌 CONEXÃO
+$conn = new mysqli("localhost", "root", "", "flashnotes");
 
-// Dados fictícios para os próximos eventos
-$proximos_eventos = array(
-    array(
-        'titulo' => 'Prova Física',
-        'data' => '08/04/26',
-        'tipo' => 'Prova'
-    ),
-    array(
-        'titulo' => 'Apresentação',
-        'data' => '08/04/26',
-        'tipo' => 'Apresentação'
-    ),
-    array(
-        'titulo' => 'Prova Química',
-        'data' => '07/04/26',
-        'tipo' => 'Prova'
-    ),
-    array(
-        'titulo' => 'Prova Português',
-        'data' => '08/04/26',
-        'tipo' => 'Prova'
-    ),
-    array(
-        'titulo' => 'Prova Literatura',
-        'data' => '09/04/26',
-        'tipo' => 'Prova'
-    ),
-    array(
-        'titulo' => 'Prova Álgebra',
-        'data' => '10/04/26',
-        'tipo' => 'Prova'
-    )
-);
+if ($conn->connect_error) {
+    die("Erro: " . $conn->connect_error);
+}
 
-// Dados fictícios para o horário
-$horarios = array(
-    array(
-        'disciplina' => 'Física',
-        'horario' => '07:00 - 08:00'
-    ),
-    array(
-        'disciplina' => 'Educação Física',
-        'horario' => '08:00 - 09:00'
-    ),
-    array(
-        'disciplina' => 'Álgebra',
-        'horario' => '09:30 - 10:30'
-    ),
-    array(
-        'disciplina' => 'Química',
-        'horario' => '10:30 - 11:30'
-    )
-);
+$usuario_id = $_SESSION['usuario_id'];
+
+// inicializar como array
+
+$tarefas_pendentes = [];
+$proximos_eventos = [];
+$horarios = [];
+
+// ======================
+// TAREFAS
+// ======================
+
+$sql = "SELECT * FROM tarefas WHERE usuario_id = ? ORDER BY vencimento ASC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+while ($row = $result->fetch_assoc()) {
+    $tarefas_pendentes[] = $row;
+}
+
+// ======================
+// EVENTOS
+// ======================
+
+$sql = "SELECT * FROM eventos WHERE usuario_id = ? ORDER BY data ASC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+while ($row = $result->fetch_assoc()) {
+    $proximos_eventos[] = $row;
+}
+
+// ======================
+// HORÁRIOS
+// ======================
+
+$sql = "SELECT * FROM horarios WHERE usuario_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+while ($row = $result->fetch_assoc()) {
+    $horarios[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
@@ -129,8 +96,8 @@ $horarios = array(
                                     <strong><?php echo htmlspecialchars($tarefa['titulo']); ?></strong>
                                 </div>
                                 <div class="detalhes-tarefa">
-                                    <span class="vencimento">Vence: <?php echo htmlspecialchars($tarefa['vencimento']); ?></span>
-                                    <span class="prioridade prioridade-<?php echo strtolower($tarefa['prioridade']); ?>">
+                                    <span class="vencimento">Vence: <?php echo date('d/m/Y', strtotime($tarefa['vencimento'])); ?></span>
+                                    <span class="prioridade prioridade-<?php echo strtolower(str_replace('é','e',$tarefa['prioridade'])); ?>">
                                         <?php echo htmlspecialchars($tarefa['prioridade']); ?>
                                     </span>
                                 </div>
@@ -155,7 +122,7 @@ $horarios = array(
                                 <div class="marcador-evento"></div>
                                 <div class="info-evento">
                                     <strong><?php echo htmlspecialchars($evento['titulo']); ?></strong>
-                                    <span class="data-evento">Data: <?php echo htmlspecialchars($evento['data']); ?></span>
+                                    <span class="data-evento">Data: <?php echo date('d/m/Y', strtotime($evento['data'])); ?></span>
                                 </div>
                             </div>
                         <?php endforeach; ?>
