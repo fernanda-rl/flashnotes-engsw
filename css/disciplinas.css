@@ -1,0 +1,420 @@
+/* ========== CABEÇALHO DA PÁGINA ========== */
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.titulo-pagina {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.titulo-pagina h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.titulo-pagina p {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0 0 0;
+}
+
+.titulo-pagina svg {
+    color: #0066da;
+    flex-shrink: 0;
+}
+
+.botao-adicionar {
+    background-color: #0066da;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.botao-adicionar:hover {
+    background-color: #0052b3;
+}
+
+/* ========== BARRA DE PESQUISA ========== */
+.barra-pesquisa {
+    margin-bottom: 30px;
+}
+
+.campo-pesquisa {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 20px;
+    border: 2px solid #0066da;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0066da;
+    background-color: white;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.campo-pesquisa::placeholder {
+    color: #0066da;
+    opacity: 0.7;
+}
+
+.campo-pesquisa:focus {
+    box-shadow: 0 0 0 3px rgba(0, 102, 218, 0.1);
+}
+
+/* ========== GRADE DE DISCIPLINAS ========== */
+.grade-disciplinas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.card-disciplina {
+    background-color: #d9d9d9;
+    border-radius: 16px;
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card-disciplina:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-disciplina h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 15px 0;
+}
+
+.info-disciplina {
+    margin-bottom: 15px;
+}
+
+.info-disciplina p {
+    font-size: 13px;
+    color: #333;
+    margin: 8px 0;
+}
+
+.info-disciplina strong {
+    font-weight: 600;
+}
+
+.acoes-disciplina {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.botao-editar,
+.botao-deletar {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.botao-editar {
+    background-color: transparent;
+    color: #333;
+    text-decoration: underline;
+}
+
+.botao-editar:hover {
+    color: #0066da;
+}
+
+.botao-deletar {
+    background-color: transparent;
+    color: #333;
+    text-decoration: underline;
+}
+
+.botao-deletar:hover {
+    color: #e74c3c;
+}
+
+/* ========== MODAIS ========== */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+}
+
+.overlay.ativo {
+    display: block;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #0066da;
+    border-radius: 20px;
+    padding: 30px;
+    z-index: 200;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: abrirModal 0.3s ease;
+}
+
+.modal.ativo {
+    display: block;
+}
+
+@keyframes abrirModal {
+    from {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+.conteudo-modal {
+    color: white;
+}
+
+.cabecalho-modal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.cabecalho-modal h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.botao-fechar {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.botao-fechar:hover {
+    opacity: 0.8;
+}
+
+/* ========== FORMULÁRIO ========== */
+.formulario-disciplina {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.grupo-formulario label {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+}
+
+.grupo-formulario input {
+    padding: 12px 16px;
+    border: 2px solid white;
+    border-radius: 12px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.grupo-formulario input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.grupo-formulario input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.botao-salvar {
+    padding: 12px 24px;
+    background-color: white;
+    color: #0066da;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.botao-salvar:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+/* ========== MODAL DE EXCLUSÃO ========== */
+.conteudo-excluir {
+    text-align: center;
+    padding: 40px 30px;
+}
+
+.titulo-excluir {
+    margin-bottom: 20px;
+}
+
+.titulo-excluir h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.titulo-excluir h3 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.mensagem-excluir {
+    font-size: 16px;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.botoes-excluir {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.botao-nao,
+.botao-sim {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.botao-nao {
+    background-color: white;
+    color: #0066da;
+}
+
+.botao-nao:hover {
+    background-color: #f0f0f0;
+}
+
+.botao-sim {
+    background-color: white;
+    color: #0066da;
+}
+
+.botao-sim:hover {
+    background-color: #f0f0f0;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+@media (max-width: 768px) {
+    .cabecalho-pagina {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .botao-adicionar {
+        width: 100%;
+    }
+
+    .grade-disciplinas {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .modal {
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    .campo-pesquisa {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .titulo-pagina h1 {
+        font-size: 22px;
+    }
+
+    .titulo-pagina p {
+        font-size: 12px;
+    }
+
+    .grade-disciplinas {
+        grid-template-columns: 1fr;
+    }
+
+    .modal {
+        max-width: 95%;
+        padding: 15px;
+    }
+
+    .cabecalho-modal h2 {
+        font-size: 18px;
+    }
+
+    .titulo-excluir h3 {
+        font-size: 28px;
+    }
+
+    .botoes-excluir {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .botao-nao,
+    .botao-sim {
+        width: 100%;
+    }
+}
