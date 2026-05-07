@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-// 🔒 Proteção de acesso
+// Proteção de acesso
 if (!isset($_SESSION['usuario_logado'])) {
     header("Location: login.php");
     exit();
 }
 
-// 🔌 CONEXÃO
+// CONEXÃO
 $conn = new mysqli("localhost", "flashuser", "1234", "flashnotes");
 
 if ($conn->connect_error) {
