@@ -27,6 +27,11 @@ SET time_zone = "+00:00";
 -- Estrutura para tabela `eventos`
 --
 
+CREATE USER 'flashuser'@'localhost' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON flashnotes.* TO 'flashuser'@'localhost';
+
+CREATE DATABASE flashnotes;
+
 CREATE TABLE `eventos` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) DEFAULT NULL,
