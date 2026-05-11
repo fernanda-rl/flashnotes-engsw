@@ -63,7 +63,7 @@ CREATE TABLE `horarios` (
   `horario_inicio` time DEFAULT NULL,
   `horario_fim` time DEFAULT NULL,
   `dia` varchar(50) DEFAULT NULL,
-  `duracao` varchar(50) DEFAULT NULL
+  `professor` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -71,8 +71,8 @@ CREATE TABLE `horarios` (
 --
 
 INSERT INTO `horarios` (`id`, `usuario_id`, `disciplina`, `horario_inicio`, `horario_fim`, `dia`, `duracao`) VALUES
-(0, 2, 'Matemática', '08:00:00', '08:33:00', 'Terça-feira', '33'),
-(0, 2, 'Portugues', '09:50:00', '11:30:00', 'Sexta-feira', '1');
+(0, 2, 'Matemática', '08:00:00', '08:33:00', 'Terça-feira', 'João da Silva'),
+(0, 2, 'Portugues', '09:50:00', '11:30:00', 'Sexta-feira', 'Kim Seungmin');
 
 -- --------------------------------------------------------
 
