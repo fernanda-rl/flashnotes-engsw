@@ -74,8 +74,8 @@ $mes_nome = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashnotes - Agenda</title>
-    <link rel="stylesheet" href="dashboard.css">
-    <link rel="stylesheet" href="agenda.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/agenda.css">
 </head>
 <body>
     <div class="container-dashboard">
