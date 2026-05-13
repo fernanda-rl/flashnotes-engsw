@@ -78,17 +78,12 @@ $email_usuario = $_SESSION['email_usuario'] ?? 'usuario@exemplo.com';
             <img src="icons/perfil.svg" width="24" height="24" alt="Sino de notificação">
         </div>
         <div class="info-usuario">
-            <p class="nome-usuario"><?php echo htmlspecialchars($nome_usuario); ?></p>
             <p class="email-usuario"><?php echo htmlspecialchars($email_usuario); ?></p>
         </div>
     </div>
     
     <hr class="divisor-menu">
     
-    <a href="perfil.php" class="opcao-menu">
-        <img src="icons/perfil.svg" width="24" height="24" alt="Sino de notificação">
-        Meu Perfil
-    </a>
     
     <a href="configuracoes.php" class="opcao-menu">
         <img src="icons/engrenagem.svg" width="24" height="24" alt="Engrenagem">

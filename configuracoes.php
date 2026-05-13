@@ -15,8 +15,8 @@ if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true)
     exit();
 }
 
-// Define a seção ativa (padrão: perfil)
-$secao_ativa = isset($_GET['secao']) ? $_GET['secao'] : 'perfil';
+// Define a seção ativa (padrão: email)
+$secao_ativa = isset($_GET['secao']) ? $_GET['secao'] : 'email';
 ?>
 
 <!DOCTYPE html>
@@ -27,6 +27,9 @@ $secao_ativa = isset($_GET['secao']) ? $_GET['secao'] : 'perfil';
     <title>Flashnotes - Configurações</title>
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/configuracoes.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container-dashboard">
@@ -46,13 +49,6 @@ $secao_ativa = isset($_GET['secao']) ? $_GET['secao'] : 'perfil';
             <div class="container-configuracoes">
                 <!-- Menu Lateral -->
                 <aside class="menu-configuracoes">
-                    <a href="?secao=perfil" class="opcao-menu <?php echo ($secao_ativa === 'perfil') ? 'ativa' : ''; ?>">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <span>Perfil</span>
-                    </a>
                     
                     <a href="?secao=email" class="opcao-menu <?php echo ($secao_ativa === 'email') ? 'ativa' : ''; ?>">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -102,31 +98,8 @@ $secao_ativa = isset($_GET['secao']) ? $_GET['secao'] : 'perfil';
                     </a>
                 </aside>
                 
-                <!-- Conteúdo das Seções -->
+                <!-- Conteudo das Seções -->
                 <section class="conteudo-configuracoes">
-                    <!-- SEÇÃO: PERFIL -->
-                    <?php if ($secao_ativa === 'perfil'): ?>
-                        <div class="secao-ativa">
-                            <h2>Meu Perfil</h2>
-                            <div class="formulario-secao">
-                                <div class="info-perfil">
-                                    <div class="avatar-perfil">
-                                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="12" cy="7" r="4"></circle>
-                                        </svg>
-                                    </div>
-                                    <div class="dados-perfil">
-                                        <p><strong>Nome:</strong> João Silva</p>
-                                        <p><strong>Email:</strong> joao.silva@email.com</p>
-                                        <p><strong>Data de Cadastro:</strong> 15 de Janeiro de 2026</p>
-                                        <p><strong>Plano:</strong> Gratuito</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                    
                     <!-- SEÇÃO: ALTERAR EMAIL -->
                     <?php if ($secao_ativa === 'email'): ?>
                         <div class="secao-ativa">

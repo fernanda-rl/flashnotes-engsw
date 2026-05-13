@@ -66,6 +66,9 @@ $dias_semana = array(
     <title>Flashnotes - Horários</title>
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/horarios.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container-dashboard">
