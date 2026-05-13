@@ -37,10 +37,7 @@ $secao_ativa = isset($_GET['secao']) ? $_GET['secao'] : 'perfil';
         <main class="conteudo-principal">
             <div class="cabecalho-configuracoes">
                 <div class="titulo-configuracoes">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
-                    </svg>
+                    <img src="icons/engrenagem.svg" width="24" height="24" alt="Engrenagem">
                     <h1>Configurações</h1>
                 </div>
             </div>

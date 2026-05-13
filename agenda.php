@@ -86,12 +86,7 @@ $mes_nome = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'
         <main class="conteudo-principal">
             <div class="cabecalho-agenda">
                 <div class="titulo-agenda">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
+                    <img src="icons/calendario4dias.svg" width="24" height="24" alt="Calendario">
                     <h1>Agenda</h1>
                 </div>
             </div>
@@ -102,9 +97,9 @@ $mes_nome = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'
                 <div class="secao-calendario">
                     <div class="calendario">
                         <div class="cabecalho-calendario">
-                            <button class="botao-mes" id="mes-anterior">&lt;</button>
+                            <button class="botao-mes" id="mes-anterior"><img src="icons/seta_esquerda.svg" width="24" height="24" alt="Calendario" style="filter: brightness(0) invert(1);"></button>
                             <h2 id="mes-ano"><?php echo $mes_nome[$mes_atual] . ' ' . $ano_atual; ?></h2>
-                            <button class="botao-mes" id="mes-proximo">&gt;</button>
+                            <button class="botao-mes" id="mes-proximo"><img src="icons/seta_direita.svg" width="24" height="24" alt="Calendario" style="filter: brightness(0) invert(1);"></button>
                         </div>
                         
                         <div class="dias-semana">
