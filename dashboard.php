@@ -26,7 +26,17 @@ $horarios = [];
 // TAREFAS
 // ======================
 
-$sql = "SELECT * FROM tarefas WHERE usuario_id = ? ORDER BY vencimento ASC";
+$sql = "SELECT *
+        FROM tarefas
+        WHERE usuario_id = ?
+        AND status != 'Concluído'
+        ORDER BY
+            CASE
+                WHEN status = 'Não iniciado' THEN 1
+                WHEN status = 'Em progresso' THEN 2
+                ELSE 3
+            END,
+            vencimento ASC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $usuario_id);
 $stmt->execute();
@@ -92,24 +102,47 @@ while ($row = $result->fetch_assoc()) {
                         <h2>Tarefas Pendentes</h2>
                     </div>
                     
-                    <div class="lista-itens">
-                        <?php foreach ($tarefas_pendentes as $tarefa): ?>
-                            <div class="item-tarefa">
-                                <div class="titulo-tarefa">
-                                    <strong><?php echo htmlspecialchars($tarefa['titulo']); ?></strong>
-                                </div>
-                                <div class="detalhes-tarefa">
-                                    <span class="vencimento">Vence: <?php echo date('d/m/Y', strtotime($tarefa['vencimento'])); ?></span>
-                                    <span class="prioridade prioridade-<?php echo strtolower(str_replace('é','e',$tarefa['prioridade'])); ?>">
-                                        <?php echo htmlspecialchars($tarefa['prioridade']); ?>
-                                    </span>
-                                </div>
-                                <div class="status-tarefa">
-                                    <?php echo htmlspecialchars($tarefa['status']); ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+            <div class="lista-itens">
+                <?php foreach ($tarefas_pendentes as $tarefa): ?>
+                    <?php
+                    $corPrioridade = '#22C55E';
+                    if ($tarefa['prioridade'] == 'Alta') {
+                        $corPrioridade = '#FF4444';
+                    }
+                    elseif ($tarefa['prioridade'] == 'Média') {
+                        $corPrioridade = '#FFD700';
+                    }
+                    elseif ($tarefa['prioridade'] == 'Baixa') {
+                        $corPrioridade = '#3B82F6';
+                    }
+                    ?>
+                    <div class="item-tarefa">
+                        <div class="titulo-tarefa">
+                            <strong>
+                                <?php echo htmlspecialchars($tarefa['titulo']); ?>
+                            </strong>
+                        </div>
+
+                        <div class="detalhes-tarefa">
+                            <span class="vencimento">
+                                Vence:
+                                <?php echo date('d/m/Y', strtotime($tarefa['vencimento'])); ?>
+                            </span>
+
+                            <span class="prioridade"
+                                style="background-color: <?php echo $corPrioridade; ?>;">
+                                <?php echo htmlspecialchars($tarefa['prioridade']); ?>
+                            </span>
+
+                        </div>
+
+                        <div class="status-tarefa
+                            status-<?php echo strtolower(str_replace(' ', '-', $tarefa['status'])); ?>">
+                            <?php echo htmlspecialchars($tarefa['status']); ?>
+                        </div>
                     </div>
+                <?php endforeach; ?>
+            </div>
                 </section>
                 
                 <!-- Coluna 2: Próximos Eventos -->
@@ -133,6 +166,39 @@ while ($row = $result->fetch_assoc()) {
                 </section>
                 
                 <!-- Coluna 3: Horário -->
+                <?php
+                date_default_timezone_set('America/Sao_Paulo');
+
+                $diasSemana = [
+                    'Sunday' => 'Domingo',
+                    'Monday' => 'Segunda-feira',
+                    'Tuesday' => 'Terça-feira',
+                    'Wednesday' => 'Quarta-feira',
+                    'Thursday' => 'Quinta-feira',
+                    'Friday' => 'Sexta-feira',
+                    'Saturday' => 'Sábado'
+                ];
+
+                $diaHoje = $diasSemana[date('l')];
+
+                $sql = "SELECT * FROM horarios
+                        WHERE usuario_id = ?
+                        AND dia = ?
+                        ORDER BY horario_inicio ASC";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("is", $usuario_id, $diaHoje);
+                $stmt->execute();
+
+                $resultado = $stmt->get_result();
+
+                $horarios = [];
+
+                while ($row = $resultado->fetch_assoc()) {
+                    $horarios[] = $row;
+                }
+
+                ?>
                 <section class="coluna">
                     <div class="cabecalho-coluna">
                         <img src="icons/relogio.svg" width="24" height="24" alt="Relógio">
@@ -140,19 +206,47 @@ while ($row = $result->fetch_assoc()) {
                     </div>
                     
                     <div class="lista-itens">
-                        <?php foreach ($horarios as $horario): ?>
-                            <div class="item-horario">
-                                <div class="disciplina-horario">
-                                    <strong><?php echo htmlspecialchars($horario['disciplina']); ?></strong>
+                        <?php if (count($horarios) > 0): ?>
+
+                                <?php foreach ($horarios as $horario): ?>
+                                    
+                                    <div class="item-horario">
+
+                                        <div class="disciplina-horario">
+                                            <strong>
+                                                <?php echo htmlspecialchars($horario['disciplina']); ?>
+                                            </strong>
+                                        </div>
+
+                                        <div class="tempo-horario">
+                                            <?php echo date('H:i', strtotime($horario['horario_inicio'])); ?>
+                                            -
+                                            <?php echo date('H:i', strtotime($horario['horario_fim'])); ?>
+                                        </div>
+
+                                        <div class="dia-horario">
+                                            <?php echo htmlspecialchars($horario['dia']); ?>
+                                        </div>
+
+                                    </div>
+
+                                <?php endforeach; ?>
+
+                            <?php else: ?>
+
+                                <div class="item-horario">
+                                    <div class="disciplina-horario">
+                                        <strong>Nenhuma aula hoje</strong>
+                                    </div>
+
+                                    <div class="tempo-horario">
+                                        Aproveite seu dia ✨
+                                    </div>
                                 </div>
-                                <div class="tempo-horario">
-                                    <?php echo htmlspecialchars($horario['horario']); ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+
+                            <?php endif; ?>
                     </div>
                 </section>
-                
             </div>
         </main>
     </div>

@@ -176,11 +176,11 @@ if (isset($_SESSION['mensagem'])) {
                     <label for="dia-semana">Dia da Semana</label>
                     <select id="dia-semana" name="dia" required>
                         <option value="">Selecione um dia</option>
-                        <option value="Segunda">Segunda-feira</option>
-                        <option value="Terça">Terça-feira</option>
-                        <option value="Quarta">Quarta-feira</option>
-                        <option value="Quinta">Quinta-feira</option>
-                        <option value="Sexta">Sexta-feira</option>
+                        <option value="Segunda-feira">Segunda-feira</option>
+                        <option value="Terça-feira">Terça-feira</option>
+                        <option value="Quarta-feira">Quarta-feira</option>
+                        <option value="Quinta-feira">Quinta-feira</option>
+                        <option value="Sexta-feira">Sexta-feira</option>
                         <option value="Sábado">Sábado</option>
                         <option value="Domingo">Domingo</option>
                     </select>
@@ -226,11 +226,11 @@ if (isset($_SESSION['mensagem'])) {
                     <label for="dia-semana-editar">Dia da Semana</label>
                     <select id="dia-semana-editar" name="dia" required>
                         <option value="">Selecione um dia</option>
-                        <option value="Segunda">Segunda-feira</option>
-                        <option value="Terça">Terça-feira</option>
-                        <option value="Quarta">Quarta-feira</option>
-                        <option value="Quinta">Quinta-feira</option>
-                        <option value="Sexta">Sexta-feira</option>
+                        <option value="Segunda-feira">Segunda-feira</option>
+                        <option value="Terça-feira">Terça-feira</option>
+                        <option value="Quarta-feira">Quarta-feira</option>
+                        <option value="Quinta-feira">Quinta-feira</option>
+                        <option value="Sexta-feira">Sexta-feira</option>
                         <option value="Sábado">Sábado</option>
                         <option value="Domingo">Domingo</option>
                     </select>
@@ -259,7 +259,9 @@ if (isset($_SESSION['mensagem'])) {
                 <form id="form-excluir" method="POST" action="crud_disciplinas.php" style="display: inline;">
                     <input type="hidden" name="acao" value="excluir">
                     <input type="hidden" id="id-disciplina-excluir" name="id">
-                    <button type="submit" class="botao-sim">Sim</button>
+                    <button type="submit" class="botao-sim">
+                        Sim
+                    </button>
                 </form>
             </div>
         </div>

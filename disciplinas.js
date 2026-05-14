@@ -53,29 +53,17 @@ function abrirModalEditar(id, nome, horaInicio, horaFim, dia, professor) {
 
 // Função para abrir modal de excluir
 function abrirModalExcluir(id, nome) {
-    disciplinaEmExclusao = id;
-    document.getElementById('nome-disciplina-excluir').textContent = nome;
-    
-    abrirModal('modal-excluir');
-}
 
-// Função para confirmar exclusão
-function confirmarExclusao() {
-    if (disciplinaEmExclusao !== null) {
-        // Aqui você faria uma requisição AJAX para deletar a disciplina do banco de dados
-        console.log('Deletando disciplina com ID:', disciplinaEmExclusao);
-        
-        // Por enquanto, apenas removemos do DOM
-        const card = document.querySelector(`[data-id="${disciplinaEmExclusao}"]`);
-        if (card) {
-            card.style.animation = 'fadeOut 0.3s ease';
-            setTimeout(() => {
-                card.remove();
-                fecharModal('modal-excluir');
-                disciplinaEmExclusao = null;
-            }, 300);
-        }
-    }
+    disciplinaEmExclusao = id;
+
+    // Nome da disciplina
+    document.getElementById('nome-disciplina-excluir').textContent = nome;
+
+    // Define o ID no input hidden
+    document.getElementById('id-disciplina-excluir').value = id;
+
+    // Abre o modal
+    abrirModal('modal-excluir');
 }
 
 // Função para salvar nova disciplina
