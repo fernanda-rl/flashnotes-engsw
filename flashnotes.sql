@@ -20,6 +20,10 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `flashnotes`
 --
+create database flashnotes;
+
+CREATE USER IF NOT EXISTS 'flashuser'@'localhost' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON flashnotes.* TO 'flashuser'@'localhost';
 
 -- --------------------------------------------------------
 
