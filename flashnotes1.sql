@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 07/05/2026 às 05:59
+-- Tempo de geração: 30/04/2026 às 06:25
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -20,6 +20,9 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `flashnotes`
 --
+
+CREATE USER IF NOT EXISTS 'flashuser'@'localhost' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON flashnotes.* TO 'flashuser'@'localhost';
 
 -- --------------------------------------------------------
 
@@ -55,19 +58,19 @@ CREATE TABLE `horarios` (
   `id` int(11) NOT NULL,
   `usuario_id` int(11) DEFAULT NULL,
   `disciplina` varchar(100) DEFAULT NULL,
-  `horario_inicio` time DEFAULT NULL,
-  `horario_fim` time DEFAULT NULL,
-  `dia` varchar(50) DEFAULT NULL,
-  `professor` varchar(50) DEFAULT NULL
+  `horario` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `horarios`
 --
 
-INSERT INTO `horarios` (`id`, `usuario_id`, `disciplina`, `horario_inicio`, `horario_fim`, `dia`, `professor`) VALUES
-(0, 2, 'Matemática', '08:00:00', '08:33:00', 'Terça-feira', 'João da Silva'),
-(0, 2, 'Portugues', '09:50:00', '11:30:00', 'Sexta-feira', 'Kim Seungmin');
+INSERT INTO `horarios` (`id`, `usuario_id`, `disciplina`, `horario`) VALUES
+(1, 2, 'Física', '07:00 - 08:00'),
+(2, 2, 'Matemática', '08:00 - 09:00'),
+(3, 2, 'Programação', '09:30 - 10:30'),
+(4, 2, 'Banco de Dados', '10:30 - 11:30'),
+(5, 2, 'Redes', '08:00 - 09:00');
 
 -- --------------------------------------------------------
 
@@ -114,13 +117,34 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha_hash`, `tipo_perfil`, `data_criacao`) VALUES
-(2, 'Usuário', 'adrielly@gmail.com', '$2y$10$lY2aBzE2cIOFNdvCjjvGHOIUn1WTc.x4fI0gqcMrRu95tsoH0Fifq', 'estudante', '2026-04-30 03:54:11'),
-(3, 'Usuário', 'leticia@gmail.com', '$2y$10$MQxjsnE2oXerfvrHTax1te6jJaZmfkxMPUALMWGeaizf7te7iBN.q', 'estudante', '2026-04-30 03:55:31'),
-(4, 'Usuário', 'felipe@gmail.com', '$2y$10$npPUklkOoJkeTs71lcxtb.TkyYaupHwTjugmlPMrKacLaL4F6w76m', 'estudante', '2026-04-30 14:41:57');
+(1, 'Teste', 'usuario@exemplo.com', '$2y$10$wH8QzQzQzQzQzQzQzQzQzOeW8eW8eW8eW8eW8eW8eW8eW8eW8eW8e', 'estudante', '2026-04-30 03:47:00'),
+(2, 'Usuário', 'adrielly@gmail.com', '$2y$10$wXdn259EBmBIAj57CunpzOl4ntVy.Xuact3UhA5GaI1raXQJnnMUq', 'estudante', '2026-04-30 03:54:11'),
+(3, 'Usuário', 'leticia@gmail.com', '$2y$10$MQxjsnE2oXerfvrHTax1te6jJaZmfkxMPUALMWGeaizf7te7iBN.q', 'estudante', '2026-04-30 03:55:31');
 
 --
 -- Índices para tabelas despejadas
 --
+
+--
+-- Índices de tabela `eventos`
+--
+ALTER TABLE `eventos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`);
+
+--
+-- Índices de tabela `horarios`
+--
+ALTER TABLE `horarios`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`);
+
+--
+-- Índices de tabela `tarefas`
+--
+ALTER TABLE `tarefas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Índices de tabela `usuarios`
@@ -134,10 +158,50 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT de tabela `eventos`
+--
+ALTER TABLE `eventos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de tabela `horarios`
+--
+ALTER TABLE `horarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de tabela `tarefas`
+--
+ALTER TABLE `tarefas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- Restrições para tabelas despejadas
+--
+
+--
+-- Restrições para tabelas `eventos`
+--
+ALTER TABLE `eventos`
+  ADD CONSTRAINT `eventos_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+
+--
+-- Restrições para tabelas `horarios`
+--
+ALTER TABLE `horarios`
+  ADD CONSTRAINT `horarios_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+
+--
+-- Restrições para tabelas `tarefas`
+--
+ALTER TABLE `tarefas`
+  ADD CONSTRAINT `tarefas_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
