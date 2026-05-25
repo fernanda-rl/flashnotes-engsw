@@ -105,7 +105,7 @@ while ($row = $result->fetch_assoc()) {
             <div class="lista-itens">
                 <?php foreach ($tarefas_pendentes as $tarefa): ?>
                     <?php
-                    $corPrioridade = '#22C55E';
+                    $corPrioridade = '#2e7d32';
                     if ($tarefa['prioridade'] == 'Alta') {
                         $corPrioridade = '#FF4444';
                     }
@@ -113,7 +113,7 @@ while ($row = $result->fetch_assoc()) {
                         $corPrioridade = '#FFD700';
                     }
                     elseif ($tarefa['prioridade'] == 'Baixa') {
-                        $corPrioridade = '#3B82F6';
+                        $corPrioridade = '#2e7d32';
                     }
                     ?>
                     <div class="item-tarefa">

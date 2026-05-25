@@ -49,7 +49,7 @@ if ($stmt) {
     while ($row = $result->fetch_assoc()) {
 
         // Define cor da prioridade
-        $cor = '#22C55E';
+        $cor = '#2e7d32';
 
         if ($row['prioridade'] == 'Alta') {
             $cor = '#FF4444';
@@ -60,7 +60,7 @@ if ($stmt) {
         }
 
         elseif ($row['prioridade'] == 'Baixa') {
-            $cor = '#3B82F6';
+            $cor = '#2e7d32';
         }
 
         $tarefas[] = [
