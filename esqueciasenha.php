@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Página de Esqueci a Senha - Flashnotes
  * HTML e PHP unificados em um único arquivo
@@ -7,6 +8,12 @@
 
 // Inicia a sessão para armazenar dados do processo
 session_start();
+
+require 'vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 // CONEXÃO COM O BANCO
 $host = "localhost";
 $usuario = "flashuser";
@@ -22,8 +29,24 @@ if ($conn->connect_error) {
 // Variáveis para armazenar mensagens e controlar o fluxo
 $mensagem_erro = '';
 $mensagem_sucesso = '';
+
 $etapa_atual = $_SESSION['etapa_recuperacao'] ?? 1;
 $email_recuperacao = $_SESSION['email_recuperacao'] ?? '';
+
+// ==========================
+// RESETAR PROCESSO
+// ==========================
+if (isset($_GET['reset'])) {
+
+    unset($_SESSION['codigo_recuperacao']);
+    unset($_SESSION['email_recuperacao']);
+    unset($_SESSION['etapa_recuperacao']);
+
+    $_SESSION['etapa_recuperacao'] = 1;
+
+    header("Location: esqueciasenha.php");
+    exit();
+}
 
 // ==========================
 // PROCESSAMENTO
@@ -51,12 +74,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $mensagem_erro = "E-mail não encontrado.";
             } else {
 
+                $codigo = rand(100000, 999999);
+
                 $_SESSION['email_recuperacao'] = $email;
-                $_SESSION['codigo_recuperacao'] = rand(100000, 999999);
+                $_SESSION['codigo_recuperacao'] = $codigo;
                 $_SESSION['etapa_recuperacao'] = 2;
 
-                $mensagem_sucesso = "Código gerado! (teste: " . $_SESSION['codigo_recuperacao'] . ")";
                 $etapa_atual = 2;
+
+                // ==========================
+                // ENVIA EMAIL
+                // ==========================
+                $mail = new PHPMailer(true);
+
+                try {
+
+                    $mail->isSMTP();
+
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+
+                    $mail->Username = 'flashnotess@gmail.com';
+
+                    // SENHA DE APP DO GOOGLE
+                    $mail->Password = 'daxs adnl lquv ifye';
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = 587;
+                    $mail->CharSet = 'UTF-8';
+                    $mail->setFrom('flashnotess@gmail.com', 'Flashnotes');
+                    $mail->addAddress($email);
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Recuperação de senha - Flashnotes';
+
+                    $mail->Body = "
+                        <h2>Recuperação de senha</h2>
+                        <p>Seu código de recuperação é:</p>
+                        <h1>$codigo</h1>
+                        <p>Se você não solicitou isso, ignore este email.</p>
+                    ";
+
+                    $mail->send();
+                    $mensagem_sucesso = "Código enviado para seu e-mail!";
+                    $etapa_atual = 2;
+
+                } catch (Exception $e) {
+                    $mensagem_erro = "Erro ao enviar e-mail: " . $mail->ErrorInfo;
+                }
             }
 
             $stmt->close();
@@ -218,7 +281,7 @@ if (!isset($_SESSION['etapa_recuperacao'])) {
                     </form>
                     
                     <div class="links-auxiliares">
-                        <p><a href="esqueciasenha.php" class="link-voltar">Voltar</a></p>
+                        <p><a href="esqueciasenha.php?reset=1" class="link-voltar">Voltar</a></p>
                     </div>
                 <?php endif; ?>
 
