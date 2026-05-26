@@ -135,12 +135,13 @@ function fecharTodosModais() {
 }
 
 // Função para abrir modal de editar
-function abrirModalEditar(id, titulo, data) {
+function abrirModalEditar(id, titulo, data, tipo) {
     document.getElementById('id-evento-editar').value = id;
     document.getElementById('titulo-evento-editar').value = titulo;
     document.getElementById('data-evento-editar').value = data;
-    
+    document.getElementById('tipo-evento-editar').value = tipo;
     abrirModal('modal-editar');
+
 }
 
 // Função para abrir modal de excluir
@@ -153,125 +154,87 @@ function abrirModalExcluir(id, titulo) {
 
 // Função para confirmar exclusão
 function confirmarExclusao() {
-    if (eventoEmExclusao !== null) {
-        console.log('Deletando evento com ID:', eventoEmExclusao);
-        
-        // Remover do DOM
-        const card = document.querySelector(`[data-id="${eventoEmExclusao}"]`);
-        if (card) {
-            card.style.animation = 'fadeOut 0.3s ease';
-            setTimeout(() => {
-                card.remove();
-                fecharModal('modal-excluir');
-                eventoEmExclusao = null;
-            }, 300);
+    fetch('crud_agenda.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            acao: 'excluir',
+            id: eventoEmExclusao
+        })
+    })
+    .then(res => res.json())
+    .then(resposta => {
+        if (resposta.sucesso) {
+            location.reload();
+        } else {
+            alert('Erro ao excluir.');
         }
-    }
+    });
 }
 
 // Função para salvar novo evento
 function salvarEvento(event) {
     event.preventDefault();
-    
     const titulo = document.getElementById('titulo-evento').value;
     const data = document.getElementById('data-evento').value;
     const tipo = document.getElementById('tipo-evento').value;
-    
-    // Converter data para formato DD/MM/YY
-    const dataObj = new Date(data);
-    const dataFormatada = String(dataObj.getDate()).padStart(2, '0') + '/' + 
-                         String(dataObj.getMonth() + 1).padStart(2, '0') + '/' + 
-                         String(dataObj.getFullYear()).slice(-2);
-    
-    // Mapa de cores por tipo
-    const coresTipo = {
-        'prova': '#FF4444',
-        'apresentacao': '#FF6B6B',
-        'trabalho': '#FFD700',
-        'reuniao': '#3B82F6',
-        'outro': '#8B5CF6'
-    };
-    
-    console.log('Salvando evento:', { titulo, data, tipo });
-    
-    // Adicionar ao DOM
-    const novoCard = document.createElement('div');
-    novoCard.className = 'card-evento';
-    novoCard.setAttribute('data-id', '0');
-    novoCard.innerHTML = `
-        <div class="indicador-evento" style="background-color: ${coresTipo[tipo]};"></div>
-        <div class="conteudo-evento">
-            <h3>${titulo}</h3>
-            <p class="data-evento">Data: ${dataFormatada}</p>
-        </div>
-        <div class="acoes-evento">
-            <button class="botao-editar-evento" onclick="abrirModalEditar(0, '${titulo}', '${data}')">
-                Editar
-            </button>
-            <button class="botao-deletar-evento" onclick="abrirModalExcluir(0, '${titulo}')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-            </button>
-        </div>
-    `;
-    
-    document.getElementById('lista-eventos').insertBefore(novoCard, document.getElementById('lista-eventos').firstChild);
-    fecharModal('modal-adicionar');
-    document.querySelector('.formulario-evento').reset();
+    fetch('crud_agenda.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            acao: 'adicionar',
+            titulo: titulo,
+            data: data,
+            tipo: tipo
+        })
+    })
+    .then(res => res.json())
+    .then(resposta => {
+        if (resposta.sucesso) {
+            location.reload();
+        } else {
+            alert('Erro ao salvar evento.');
+        }
+    });
 }
 
 // Função para salvar edição
 function salvarEdicao(event) {
     event.preventDefault();
-    
     const id = document.getElementById('id-evento-editar').value;
-    const titulo = document.getElementById('titulo-evento-editar').value;
-    const data = document.getElementById('data-evento-editar').value;
-    const tipo = document.getElementById('tipo-evento-editar').value;
-    
-    // Converter data para formato DD/MM/YY
-    const dataObj = new Date(data);
-    const dataFormatada = String(dataObj.getDate()).padStart(2, '0') + '/' + 
-                         String(dataObj.getMonth() + 1).padStart(2, '0') + '/' + 
-                         String(dataObj.getFullYear()).slice(-2);
-    
-    // Mapa de cores por tipo
-    const coresTipo = {
-        'prova': '#FF4444',
-        'apresentacao': '#FF6B6B',
-        'trabalho': '#FFD700',
-        'reuniao': '#3B82F6',
-        'outro': '#8B5CF6'
-    };
-    
-    console.log('Editando evento:', { id, titulo, data, tipo });
-    
-    // Atualizar no DOM
-    const card = document.querySelector(`[data-id="${id}"]`);
-    if (card) {
-        card.innerHTML = `
-            <div class="indicador-evento" style="background-color: ${coresTipo[tipo]};"></div>
-            <div class="conteudo-evento">
-                <h3>${titulo}</h3>
-                <p class="data-evento">Data: ${dataFormatada}</p>
-            </div>
-            <div class="acoes-evento">
-                <button class="botao-editar-evento" onclick="abrirModalEditar(${id}, '${titulo}', '${data}')">
-                    Editar
-                </button>
-                <button class="botao-deletar-evento" onclick="abrirModalExcluir(${id}, '${titulo}')">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                </button>
-            </div>
-        `;
-    }
-    
-    fecharModal('modal-editar');
+    const titulo =
+        document.getElementById('titulo-evento-editar').value;
+    const data =
+        document.getElementById('data-evento-editar').value;
+    const tipo =
+        document.getElementById('tipo-evento-editar').value;
+    fetch('crud_agenda.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            acao: 'editar',
+            id: id,
+            titulo: titulo,
+            data: data,
+            tipo: tipo
+        })
+    })
+    .then(res => res.json())
+    .then(resposta => {
+        if (resposta.sucesso) {
+
+            location.reload();
+        } else {
+            alert('Erro ao editar.');
+
+        }
+    });
 }
 
 // Fechar modais ao pressionar ESC

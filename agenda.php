@@ -1,71 +1,58 @@
 <?php
 /**
  * Agenda - Flashnotes
- * Página para visualizar e gerenciar eventos
- * Verifica se o usuário está autenticado antes de exibir o conteúdo
  */
 
-// Inicia a sessão
 session_start();
 
-// Verifica se o usuário está logado
+// Verifica login
 if (!isset($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) {
-    // Se não estiver logado, redireciona para a página de login
     header("Location: login.php");
     exit();
 }
 
-// Dados fictícios de eventos
-$eventos = array(
-    array(
-        'id' => 1,
-        'titulo' => 'Prova Física',
-        'data' => '06/04/26',
-        'tipo' => 'prova',
-        'cor' => '#FF4444'
-    ),
-    array(
-        'id' => 2,
-        'titulo' => 'Apresentação',
-        'data' => '06/04/26',
-        'tipo' => 'apresentacao',
-        'cor' => '#FF4444'
-    ),
-    array(
-        'id' => 3,
-        'titulo' => 'Prova Química',
-        'data' => '07/04/26',
-        'tipo' => 'prova',
-        'cor' => '#FFD700'
-    ),
-    array(
-        'id' => 4,
-        'titulo' => 'Prova Português',
-        'data' => '08/04/26',
-        'tipo' => 'prova',
-        'cor' => '#FFD700'
-    ),
-    array(
-        'id' => 5,
-        'titulo' => 'Prova Literatura',
-        'data' => '09/04/26',
-        'tipo' => 'prova',
-        'cor' => '#22C55E'
-    ),
-    array(
-        'id' => 6,
-        'titulo' => 'Prova Álgebra',
-        'data' => '10/04/26',
-        'tipo' => 'prova',
-        'cor' => '#22C55E'
-    ),
-);
+// Conexão com banco
+include 'conexao.php';
 
-// Função para obter o mês e ano atual
+// ID do usuário logado
+$usuario_id = $_SESSION['usuario_id'];
+
+// Buscar eventos do usuário
+$sql = "SELECT * FROM eventos
+        WHERE usuario_id = ?
+        ORDER BY data ASC";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$resultado = $stmt->get_result();
+
+// Array de eventos
+$eventos = [];
+
+while($row = $resultado->fetch_assoc()) {
+    $eventos[] = $row;
+}
+
+// Data atual
 $mes_atual = date('m');
 $ano_atual = date('Y');
-$mes_nome = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-                  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
+$mes_nome = array(
+    '',
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro'
+);
+
 ?>
 
 <!DOCTYPE html>
@@ -140,21 +127,48 @@ $mes_nome = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'
                     
                     <div class="lista-eventos" id="lista-eventos">
                         <?php foreach ($eventos as $evento): ?>
-                            <div class="card-evento" data-id="<?php echo $evento['id']; ?>">
-                                <div class="indicador-evento" style="background-color: <?php echo $evento['cor']; ?>;"></div>
-                                <div class="conteudo-evento">
-                                    <h3><?php echo htmlspecialchars($evento['titulo']); ?></h3>
-                                    <p class="data-evento">Data: <?php echo htmlspecialchars($evento['data']); ?></p>
+                            <?php
+                            $coresTipo = [
+                                'prova' => '#FF4444',
+                                'apresentacao' => '#FF6B6B',
+                                'trabalho' => '#FFD700',
+                                'reuniao' => '#3B82F6',
+                                'outro' => '#8B5CF6'
+                            ];
+                            $cor = $coresTipo[$evento['tipo']] ?? '#8B5CF6';
+                            ?>
+
+                            <div class="card-evento" data-id="<?= $evento['id']; ?>">
+
+                                <div class="indicador-evento"
+                                    style="background-color: <?= $cor; ?>;">
                                 </div>
+
+                                <div class="conteudo-evento">
+                                    <h3><?= htmlspecialchars($evento['titulo']); ?></h3>
+                                    <p class="data-evento">
+                                        Data:
+                                        <?= date('d/m/Y', strtotime($evento['data'])); ?>
+                                    </p>
+                                </div>
+
                                 <div class="acoes-evento">
-                                    <button class="botao-editar-evento" onclick="abrirModalEditar(<?php echo $evento['id']; ?>, '<?php echo htmlspecialchars($evento['titulo']); ?>', '<?php echo $evento['data']; ?>')">
+                                    <button class="botao-editar-evento"
+                                        onclick="abrirModalEditar(
+                                            <?= $evento['id']; ?>,
+                                            '<?= htmlspecialchars($evento['titulo']); ?>',
+                                            '<?= $evento['data']; ?>',
+                                            '<?= $evento['tipo']; ?>'
+                                        )">
                                         Editar
                                     </button>
-                                    <button class="botao-deletar-evento" onclick="abrirModalExcluir(<?php echo $evento['id']; ?>, '<?php echo htmlspecialchars($evento['titulo']); ?>')">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                        </svg>
+
+                                    <button class="botao-deletar-evento"
+                                        onclick="abrirModalExcluir(
+                                            <?= $evento['id']; ?>,
+                                            '<?= htmlspecialchars($evento['titulo']); ?>'
+                                        )">
+                                        Excluir
                                     </button>
                                 </div>
                             </div>
